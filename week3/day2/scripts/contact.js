@@ -86,6 +86,10 @@ class Contact {
                 Email Address: ${this._emailAddress}`;
     }
 
+    /**
+     * Serializes the contact details into a string format suitanbe for storage
+     * @returns {string|null}
+     */
     serialize(){
         if(!this._fullName || !this._contactNumber || !this._emailAddress){
             console.error("One or more of the contact properties are missing or invalid");
