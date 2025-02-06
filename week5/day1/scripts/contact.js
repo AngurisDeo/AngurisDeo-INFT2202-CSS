@@ -72,7 +72,7 @@
          * @param emailAddress
          */
         set emailAddress(emailAddress) {
-            const emailRegex = /^[\s@]+@[\s@]+\.[\s@]+$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(emailAddress)) {
                 throw new Error("Invalid email address: must be a non-empty string of email format");
             }
@@ -90,7 +90,7 @@
         }
 
         /**
-         * Serializes the contact details into a string format suitanbe for storage
+         * Serializes the contact details into a string format suitable for storage
          * @returns {string|null}
          */
         serialize(){

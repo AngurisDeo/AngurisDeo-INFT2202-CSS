@@ -1,6 +1,5 @@
 "use strict";
 
-<<<<<<< HEAD
 (function() {
     function  DisplayHomepage(){
         console.log("Display Homepage");
@@ -39,7 +38,7 @@
     }
     window.addEventListener("load", Start);
 })();
-=======
+
 //IIFE - Immediately Invoked Functional Expression
 (function () {
 
@@ -192,4 +191,4 @@
     window.addEventListener("load", Start);
 
 })()
->>>>>>> a6e38a7 (week3)
+
