@@ -3,6 +3,30 @@
 //IIFE - Immediately Invoked Functional Expression
 (function () {
 
+    function CheckLogin(){
+        console.log("[INFO] Checking user login status.");
+
+        const loginNav = document.getElementById("login")
+
+        if(!loginNav){
+            console.warn("[WARNING] loginNav element not found! Skipping CheckLogin().");
+            return;
+        }
+
+        const userSession = sessionStorage.getItem("user");
+
+        if(userSession) {
+            loginNav.innerHTML = `<i class="fas fa-sign-out-alt"></i> Logout`;
+            loginNav.href = "#";
+
+            loginNav.addEventListener("click", (event) => {
+                event.preventDefault();
+                sessionStorage.removeItem("user");
+                location.href = "login.html";
+            });
+        }
+    }
+
 
     /**
      * Update the navigation bar to highlight the current active page
@@ -27,29 +51,102 @@
      * Dynamically loads the header from the header.html into the current page
      * @returns {Promise<void>}
      */
-    async function LoadHeader(){
+    function LoadHeader(){
         console.log("[INFO] LoadHeader() called...");
 
-        try {
-            const response = await fetch("header.html");
-            const data = await response.text();
-
-            document.querySelector('header').innerHTML = data;
-
-            //Ensure updateNavLink runs only after the header is fully inserted
-            updateActiveNavLink();
-
-
-        } catch(error) {
-            console.log("[ERROR] Unable to load header: " + error);
-
-        }
-
-
+        return fetch("header.html")
+            .then(response => response.text())
+            .then(data => {
+                document.querySelector('header').innerHTML = data;
+                updateActiveNavLink();
+            })
+            .catch (error => console.log("[ERROR] Unable to load header ", error));
     }
 
     function DisplayLoginPage(){
         console.log("[INFO] DisplayLoginPage() called...");
+
+        const messageArea = document.getElementsByClassName("messageArea");
+        const loginButton = document.getElementsByClassName("loginButton");
+        const cancelButton = document.getElementsByClassName("cancelButton");
+
+        //hide the message initially
+        messageArea.style.display = "none";
+
+        if(!loginButton){
+            console.error("[ERROR] loginButton not found in the DOM...");
+            return;
+        }
+
+        loginButton.addEventListener("click", async (event ) => {
+
+            event.preventDefault();
+
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            try {
+
+                const response = await fetch("data/users.json");
+
+                if(!response.ok) {
+                    throw new Error(`HTTP error Status: ${response.statusText}`);
+                }
+
+                const jsonData = await response.json();
+                const users = jsonData.users;
+
+
+                if(!Array.isArray(users)){
+                    throw new Error(`[ERROR] JSON data does not contain a valid data users array`);
+                }
+
+                let success = false;
+                let authenticatedUser = null;
+
+                for(const user of users){
+
+                    if(user.Username === username && user.Password === password){
+                        success = true;
+                        authenticatedUser = user;
+                        break;
+                    }
+                }
+
+                if(success){
+                    sessionStorage.setItem("user", JSON.stringify( {
+                        DisplayName: authenticatedUser.DisplayName,
+                        EmailAddress: authenticatedUser.EmailAddress,
+                        Username: authenticatedUser.Username,
+                    }));
+
+                    messageArea.style.display = "none";
+                    messageArea.classList.remove("alert, alert-danger");
+                    location.href = "contact-list.html";
+                }else{
+
+                    messageArea.style.display = "block";
+                    messageArea.classList.add("alert, alert-danger")
+                    messageArea.textContent = "Invalid username or password. Please try again";
+
+                    document.getElementById("username").focus();
+                    document.getElementById("username").select();
+                }
+
+            }catch(error) {
+                console.error("[ERROR] Failure to login", error);
+            }
+
+        });
+
+        cancelButton.addEventListener("click", async (event ) => {
+            document.getElementById("loginForm").reset();
+            location.href = "index.html";
+        });
+
+
+
+
     }
 
 
@@ -344,7 +441,7 @@
             contactList.innerHTML = data;
         }
         const addButton = document.getElementById("addButton");
-        addButton.addEventListener("click", (e) => {
+        addButton.addEventListener("click", ( e) => {
             location.href = "edit.html#add";
         });
 
@@ -433,8 +530,10 @@
         console.log("Start App...");
         console.log(`Current document title is ${document.title}`);
 
-        // wait for the header to load before running anything else
-        await LoadHeader();
+        //LoadHeader first, then run CheckLogin
+        await LoadHeader().then( () => {
+            CheckLogin();
+        });
 
         switch(document.title){
             case "Home":
