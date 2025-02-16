@@ -2,23 +2,23 @@
   "users" :
   [
     {
-      "DisplayName" : "Bilbo Baggins",
-      "EmailAddress" : "bbaggins@durhamcollege.ca",
-      "Username" : "bbaggins",
+      "DisplayName" : "Deodato Sozinho",
+      "EmailAddress" : "dedisozinho@durhamcollege.ca",
+      "Username" : "Deodato",
       "Password" : "12345"
     },
     {
-      "DisplayName" : "Usain Bolt",
-      "EmailAddress" : "ubolt@durhamcollege.ca",
-      "Username" : "usain",
-      "Password" : "67890"
+      "DisplayName" : "Spongebob",
+      "EmailAddress" : "spongebob@durhamcollege.ca",
+      "Username" : "sponge",
+      "Password" : "54321"
     },
 
     {
-      "DisplayName" : "admin",
-      "EmailAddress" : "admin@durhamcollege.ca",
-      "Username" : "admin",
-      "Password" : "password"
+      "DisplayName" : "bruce wayne",
+      "EmailAddress" : "bruce@durhamcollege.ca",
+      "Username" : "bruce",
+      "Password" : "batman"
     }
   ]
 
