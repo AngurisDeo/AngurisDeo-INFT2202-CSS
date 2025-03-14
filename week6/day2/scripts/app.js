@@ -66,11 +66,18 @@
     function DisplayLoginPage(){
         console.log("[INFO] DisplayLoginPage() called...");
 
-        const messageArea = document.getElementsByClassName("messageArea");
-        const loginButton = document.getElementsByClassName("loginButton");
-        const cancelButton = document.getElementsByClassName("cancelButton");
+        // Get the first element with class 'messageArea'
+        const messageArea = document.getElementsByClassName("messageArea")[0];
+        const loginButton = document.getElementsByClassName("loginButton")[0];
+        const cancelButton = document.getElementsByClassName("cancelButton")[0];
 
-        //hide the message initially
+        // Check if messageArea exists
+        if (!messageArea) {
+            console.error("[ERROR] messageArea element not found in the DOM...");
+            return;
+        }
+
+        // Hide the message initially
         messageArea.style.display = "none";
 
         if(!loginButton){
@@ -96,7 +103,6 @@
                 const jsonData = await response.json();
                 const users = jsonData.users;
 
-
                 if(!Array.isArray(users)){
                     throw new Error(`[ERROR] JSON data does not contain a valid data users array`);
                 }
@@ -121,12 +127,12 @@
                     }));
 
                     messageArea.style.display = "none";
-                    messageArea.classList.remove("alert, alert-danger");
+                    messageArea.classList.remove("alert", "alert-danger");
                     location.href = "contact-list.html";
                 }else{
 
                     messageArea.style.display = "block";
-                    messageArea.classList.add("alert, alert-danger")
+                    messageArea.classList.add("alert", "alert-danger");
                     messageArea.textContent = "Invalid username or password. Please try again";
 
                     document.getElementById("username").focus();
@@ -143,11 +149,8 @@
             document.getElementById("loginForm").reset();
             location.href = "index.html";
         });
-
-
-
-
     }
+
 
 
     function DisplayRegisterPage(){
@@ -334,7 +337,7 @@
                 break;
             }
             default: {
-                // Edit a existing contact
+                // Edit existing contact
                 const contact = new core.Contact();
                 const contactData = localStorage.getItem(page);
 
