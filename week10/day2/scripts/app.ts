@@ -322,7 +322,9 @@ const router = new Router(routes);
                     //attach the event listeners
                     addEventListenersOnce("editButton", "click", handleAddClick);
                     addEventListenersOnce("cancelButton", "click", handleCancelClick);
-
+                    //
+                    const contactData:=localStorage.getItem(page)
+                    if(!contactData)
                     break;
                 }
             }
@@ -337,9 +339,9 @@ const router = new Router(routes);
                 }
 
                 //repopulate form fields with existing contact details
-                document.getElementById("fullName").value = contact.fullName;
-                document.getElementById("contactNumber").value = contact.contactNumber;
-                document.getElementById("emailAddress").value = contact.emailAddress;
+                (document.getElementById("fullName" )as HTMLInputElement).value = contact.fullName;
+                (document.getElementById("contactNumber") as HTMLInputElement).value = contact.contactNumber;
+                ( document.getElementById("emailAddress") as HTMLInputElement).value = contact.emailAddress;
 
                 if (editButton) {
                     editButton.innerHTML = `<i class="fa-solid fa-user-plus"></i>Edit Contact`;
@@ -361,31 +363,29 @@ const router = new Router(routes);
         const city = "Oshawa";
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
-        try {
-
-            const response = await fetch(url);
-
-            if(!response.ok){
-                throw new Error("Failed to fetch weather data");
+       fetch(url)
+        .then(response => {
+            if (!response.ok)  throw new Error("Failed to fetch weather");{
+               return response.json() ;
             }
+        })
+
+           .then((data:{name: string;main:{temp:number};weather:{description:string[]}}) => {
+
+               const weatherElement: = HTMLElement|null=document.getElementById("weather-data");
+               if(!weatherElement){
+                   weatherElement.innerHTML=`
+                   <strong>City:</strong>{data.main.temp)
+                   
+                   `
 
 
-            const data = await response.json();
-            console.log("Weather API response: ", data);
+               }
+           })
 
-            const weatherDataElement = document.getElementById("weather-data");
 
-            weatherDataElement.innerHTML = `<strong>City: </strong> ${data.name}<br>
-                                            <strong>Temperature: </strong> ${data.main.temp} °C<br>
-                                            <strong>Weather: </strong> ${data.weather[0].description}<br>`
+        })
 
-        } catch (error) {
-
-            console.error("Error fetching weather data", error);
-            document.getElementById("weather-data").textContent = "Unable to fetch weather data at this time";
-        }
-
-    }
 
     function DisplayContactListPage(){
         console.log("Called DisplayContactListPage() ...");
@@ -393,11 +393,28 @@ const router = new Router(routes);
         if(localStorage.length > 0){
 
             let contactList = document.getElementById("contactList");
-            let data = "";
+            if(!contactList){
+                console.warn("[WARNING] ELEMNT with Id 'container' not found  found.");
+                return ;
+            }
+            let data:string = "";
 
-            let keys = Object.keys(localStorage);
+            let keys:string [] = Object.keys(localStorage);
 
-            let index = 1;
+            let index :number = 1;
+
+            keys.forEach((key:string) => {
+                if(keys.startswith("contact_")){
+                    let  contactData:string|null=localStorage.getItem(key);
+                    if(contactData){
+                        console.warn(`[WARNING] NO data found for key${key}: )}`);
+                    }
+
+                }
+
+
+            })
+            if(keys.length > 0){}
             for(const key of keys){
 
                 if(key.startsWith("contact_")){
@@ -439,7 +456,7 @@ const router = new Router(routes);
         });
 
 
-        const deleteButtons = document.querySelectorAll("button.delete");
+        const deleteButtons  :NodeListOf<HTMLElement> = document.querySelectorAll("button.delete");
         deleteButtons.forEach(button => {
             button.addEventListener("click", function () {
 
@@ -459,7 +476,8 @@ const router = new Router(routes);
             });
         });
 
-        const editButtons = document.querySelectorAll("button.edit");
+        const editButtons:NodeListOf<HTMLElement> = document.querySelectorAll("button.edit");
+
         editButtons.forEach(button => {
             button.addEventListener("click", function () {
                 router.navigate(`/edit#${this.value}`);
